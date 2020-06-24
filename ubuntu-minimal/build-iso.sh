@@ -103,7 +103,6 @@ d-i pkgsel/updatedb boolean true
 d-i pkgsel/upgrade select full-upgrade
 #d-i pkgsel/include string openssh-server build-essential kde-plasma-desktop
 #d-i pkgsel/include string openssh-server build-essential ubuntu-gnome-desktop
-d-i pkgsel/include string openssh-server build-essential ubuntu-gnome-desktop
 d-i pkgsel/language-packs multiselect en, pl
 d-i pkgsel/update-policy select unattended-upgrades
 
