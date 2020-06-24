@@ -48,7 +48,7 @@ d-i netcfg/get_domain string hostdomain
 d-i mirror/country string manual
 d-i mirror/http/hostname string pl.archive.ubuntu.com
 d-i mirror/http/directory string /ubuntu
-d-i mirror/suite string bionic
+d-i mirror/suite string focal
 
 d-i user-setup/allow-password-weak boolean true
 
@@ -79,6 +79,7 @@ d-i partman-auto/choose_recipe select root-encrypted
 d-i partman-auto/expert_recipe string                         \
       root-encrypted ::                                       \
               1024 100 1024 ext4                              \
+                      $gptonly{ }
                       $primary{ } $bootable{ }                \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ ext4 }    \
@@ -87,6 +88,7 @@ d-i partman-auto/expert_recipe string                         \
               8192 150 -1 ext4                                \
                       $lvmok{ } lv_name{ root }               \
                       in_vg { crypt }                         \
+                      $gptonly{ }
                       $primary{ }                             \
                       method{ format } format{ }              \
                       use_filesystem{ } filesystem{ ext4 }    \
@@ -103,6 +105,7 @@ d-i pkgsel/updatedb boolean true
 d-i pkgsel/upgrade select full-upgrade
 #d-i pkgsel/include string openssh-server build-essential kde-plasma-desktop
 #d-i pkgsel/include string openssh-server build-essential ubuntu-gnome-desktop
+d-i pkgsel/include string openssh-server build-essential lvm2 cryptsetup
 d-i pkgsel/language-packs multiselect en, pl
 d-i pkgsel/update-policy select unattended-upgrades
 
@@ -119,16 +122,16 @@ mv "$TEMP_DIR/initrd.gz" "$BUILD_DIR"
 chmod 444 "$BUILD_DIR/initrd.gz"
 
 xorriso -as mkisofs -r -V "Custom Ubuntu" \
-    -cache-inodes -J -l \
-    -isohybrid-mbr "$UBUNTU_MBR" \
-	-c boot.cat \
-	-b isolinux.bin \
-	-no-emul-boot -boot-load-size 4 -boot-info-table \
-	-eltorito-alt-boot \
-	-e boot/grub/efi.img \
-	-no-emul-boot -isohybrid-gpt-basdat \
-	-o "$CUSTOM_ISO" \
-	"$BUILD_DIR"
+  -cache-inodes -J -l \
+  -isohybrid-mbr "$UBUNTU_MBR" \
+  -c boot.cat \
+  -b isolinux.bin \
+  -no-emul-boot -boot-load-size 4 -boot-info-table \
+  -eltorito-alt-boot \
+  -e boot/grub/efi.img \
+  -no-emul-boot -isohybrid-gpt-basdat \
+  -o "$CUSTOM_ISO" \
+  "$BUILD_DIR"
 
 mount -o loop "$CUSTOM_ISO" "$CUSTOM_ISO_DIR"
 chmod 755 "$BASE_DIR"
