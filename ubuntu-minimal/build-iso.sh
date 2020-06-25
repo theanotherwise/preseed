@@ -80,6 +80,18 @@ d-i partman-auto-lvm/new_vg_name string crypt
 d-i partman-auto/choose_recipe select root-encrypted
 d-i partman-auto/expert_recipe string                         \
       root-encrypted ::                                       \
+              1 1 1 free                                      \
+                      $bios_boot{ }                           \
+                      method{ biosgrub }                      \
+              .                                               \
+              1024 150 1024 fat32                             \
+                      $iflabel{ gpt }                         \
+                      $gptonly{ }                             \
+                      $primary{ }                             \
+                      $reusemethod{ }                         \
+                      method{ efi } format{ }                 \
+                      use_filesystem{ } filesystem{ fat32 }   \
+              .                                               \
               1024 100 1024 ext4                              \
                       $gptonly{ }                             \
                       $primary{ } $bootable{ }                \
@@ -87,14 +99,7 @@ d-i partman-auto/expert_recipe string                         \
                       use_filesystem{ } filesystem{ ext4 }    \
                       mountpoint{ /boot }                     \
               .                                               \
-              1024 100 1024 ext4                              \
-                      $gptonly{ }                             \
-                      $primary{ } $bootable{ }                \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ ext4 }    \
-                      mountpoint{ /boot/efi }                 \
-              .                                               \
-              8192 150 -1 ext4                                \
+              8192 200 -1 ext4                                \
                       $lvmok{ } lv_name{ root }               \
                       in_vg { crypt }                         \
                       $gptonly{ }                             \
@@ -120,7 +125,7 @@ d-i partman/confirm_nooverwrite boolean true
 
 d-i pkgsel/updatedb boolean true
 d-i pkgsel/upgrade select full-upgrade
-# d-i pkgsel/include string kde-plasma-desktop ubuntu-gnome-desktop
+d-i pkgsel/include string kde-plasma-desktop ubuntu-gnome-desktop
 d-i pkgsel/language-packs multiselect en, pl
 d-i pkgsel/update-policy select unattended-upgrades
 
@@ -131,16 +136,16 @@ d-i preseed/late_command string in-target apt-get update ; \
                                 in-target apt-get upgrade -y ; \
                                 in-target apt-get dist-upgrade -y ; \
                                 in-target apt-get install -y openssh-server build-essential lvm2 cryptsetup ; \
-                                in-target apt-get install -y sudo gdebi wget perl gawk sed awk python3
-#                                in-target wget https://zoom.us/client/latest/zoom_amd64.deb -O /tmp/zoom_amd64.deb ; \
-#                                in-target wget https://downloads.slack-edge.com/linux_releases/slack-desktop-4.4.3-amd64.deb -O /tmp/slack-desktop-4.4.3-amd64.deb ; \
-#                                in-target wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb -O /tmp/teamviewer_amd64.deb ; \
-#                                in-target wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome-stable_current_amd64.deb ; \
-#                                in-target dpkg -i /tmp/zoom_amd64.deb ; \
-#                                in-target dpkg -i /tmp/slack-desktop-4.4.3-amd64.deb ; \
-#                                in-target dpkg -i /tmp/teamviewer_amd64.deb ; \
-#                                in-target dpkg -i /tmp/google-chrome-stable_current_amd64.deb ; \
-#                                in-target apt-get --fix-broken install -y
+                                in-target apt-get install -y sudo gdebi wget perl gawk sed awk python3 ; \
+                                in-target wget https://zoom.us/client/latest/zoom_amd64.deb -O /tmp/zoom_amd64.deb ; \
+                                in-target wget https://downloads.slack-edge.com/linux_releases/slack-desktop-4.4.3-amd64.deb -O /tmp/slack-desktop-4.4.3-amd64.deb ; \
+                                in-target wget https://download.teamviewer.com/download/linux/teamviewer_amd64.deb -O /tmp/teamviewer_amd64.deb ; \
+                                in-target wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome-stable_current_amd64.deb ; \
+                                in-target dpkg -i /tmp/zoom_amd64.deb ; \
+                                in-target dpkg -i /tmp/slack-desktop-4.4.3-amd64.deb ; \
+                                in-target dpkg -i /tmp/teamviewer_amd64.deb ; \
+                                in-target dpkg -i /tmp/google-chrome-stable_current_amd64.deb ; \
+                                in-target apt-get --fix-broken install -y ;
 EndOfMessage
 
 chmod 644 "$TEMP_DIR/initrd/preseed.cfg"
