@@ -40,9 +40,9 @@ d-i debian-installer/country string US
 d-i debian-installer/locale string en_US.UTF-8
 
 d-i netcfg/choose_interface select auto
-d-i netcfg/link_wait_timeout string 1
-d-i netcfg/dhcpv6_timeout string 1
-d-i netcfg/dhcp_timeout string 3
+d-i netcfg/link_wait_timeout string 15
+d-i netcfg/dhcpv6_timeout string 15
+d-i netcfg/dhcp_timeout string 15
 d-i netcfg/hostname string hostname
 d-i netcfg/get_hostname string hostname
 d-i netcfg/get_domain string hostdomain
@@ -70,7 +70,11 @@ d-i clock-setup/ntp boolean true
 d-i clock-setup/ntp-server string 0.pl.pool.ntp.org
 
 d-i partman-auto/init_automatically_partition select biggest_free
+d-i partman/unmount_active boolean true
+d-i partman-auto/disk string /dev/nvme0n1
+# d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method string crypto
+d-i partman-efi/non_efi_system boolean true
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-md/device_remove_md boolean true
 d-i partman-lvm/confirm boolean true
@@ -86,9 +90,9 @@ d-i partman-auto/expert_recipe string                         \
               .                                               \
               1024 150 1024 fat32                             \
                       $iflabel{ gpt }                         \
+                      $reusemethod{ }                         \
                       $gptonly{ }                             \
                       $primary{ }                             \
-                      $reusemethod{ }                         \
                       method{ efi } format{ }                 \
                       use_filesystem{ } filesystem{ fat32 }   \
               .                                               \
@@ -171,3 +175,4 @@ xorriso -as mkisofs -r -V "Custom Ubuntu" \
 mount -o loop "$CUSTOM_ISO" "$CUSTOM_ISO_DIR"
 chmod 755 "$BASE_DIR"
 chmod 644 "$CUSTOM_ISO"
+ 
