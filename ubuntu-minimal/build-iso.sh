@@ -1,4 +1,4 @@
-apt-get install mkisofs xorriso gzip cpio rsync
+apt-get install mkisofs xorriso gzip cpio rsync ubuntu-software
 
 ISO_URL="http://archive.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/current/legacy-images/netboot/mini.iso"
 
